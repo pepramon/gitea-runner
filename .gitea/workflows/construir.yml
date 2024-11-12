@@ -8,6 +8,7 @@ on:
 jobs:
   crear-imagen:
     runs-on: custom
+    privileged: true
     steps:
       - name: Logeo en dockerhub
         run: buildah login -u pepramon -p ${{ secret.DOCKERHUB }} docker.io
