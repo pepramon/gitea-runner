@@ -7,6 +7,7 @@ ENV STORAGE_DRIVER=vfs
 # Instala dependencias necesarias, buildah y git
 RUN apk update && \
     apk add --no-cache \
+    bash \
     buildah \
     git \
     shadow \
