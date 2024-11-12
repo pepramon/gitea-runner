@@ -8,12 +8,13 @@ ENV STORAGE_DRIVER=vfs
 RUN apk update && \
     apk add --no-cache \
     bash \
-    buildah \
+    podman \
+    fuse-overlayfs \
     git \
     shadow \
     runc \
     openssl && \
     rm -rf /var/cache/apk/*
 
-# Crea una entrada de prueba opcional (puedes eliminarla si no la necesitas)
-CMD ["buildah", "--help"]
+# Para verificar instalacion
+CMD ["podman", "--version"]
