@@ -1,0 +1,20 @@
+name: Crear nueva imagen al actualizar
+run-name: Se crea nueva imagen y se sube a dockerhub
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  crear-imagen:
+    runs-on: custom
+    steps:
+      - name: Logeo en dockerhub
+        run: buildah login -u pepramon -p ${{ secret.DOCKERHUB }} docker.io
+      - name: Checkout repositorio
+        id: chekout
+        uses: http://gitea:3000/acciones/checkout@v1
+      - name: Se construye la imagen
+        run: buildah bud -t pepramon/gitea-runer:latest .
+      - name: Se sube la imagen
+        run: buildah push pepramon/gitea-runer:latest
