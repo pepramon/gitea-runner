@@ -10,8 +10,8 @@ jobs:
     runs-on: custom
     privileged: true
     steps:
-      - name: Logeo en dockerhub
-        run: podman login -u pepramon -p ${{ secrets.DOCKERHUB }} docker.io
+#      - name: Logeo en dockerhub
+#        run: podman login -u pepramon -p ${{ secrets.DOCKERHUB }} docker.io
       - name: Test de que se lee la variable (erronea, cambiar)
         run: echo "El secreto es--> ${{ secrets.DOCKERHUBTEST }}"
 #      - name: Checkout repositorio
