@@ -11,9 +11,9 @@ jobs:
     privileged: true
     steps:
       - name: Logeo en dockerhub
-        run: podman login -u pepramon -p ${{ secret.DOCKERHUB }} docker.io
+        run: podman login -u pepramon -p ${{ secrets.DOCKERHUB }} docker.io
       - name: Test de que se lee la variable (erronea, cambiar)
-        run: echo "El secreto es: ${{ secrets.DOCKERHUBTEST }}"
+        run: echo "El secreto es--> ${{ secrets.DOCKERHUBTEST }}"
 #      - name: Checkout repositorio
 #        id: chekout
 #        uses: http://gitea:3000/acciones/checkout@v1
