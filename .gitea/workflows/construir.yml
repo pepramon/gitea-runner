@@ -16,6 +16,6 @@ jobs:
         id: chekout
         uses: http://gitea:3000/acciones/checkout@v1
       - name: Se construye la imagen
-        run: podman build -t pepramon/gitea-runer:latest .
+        run: podman build -t docker.io/pepramon/gitea-runer:latest .
       - name: Se sube la imagen
-        run: podman push pepramon/gitea-runer:latest
+        run: podman push docker.io/pepramon/gitea-runer:latest
