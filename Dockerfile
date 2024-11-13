@@ -1,20 +1,10 @@
-# Usa la imagen base de Alpine
+# Usamos Alpine como base para un entorno ligero
 FROM alpine:latest
 
-# Establece variables de entorno para la configuración de buildah
-ENV STORAGE_DRIVER=vfs
-
-# Instala dependencias necesarias, buildah y git
+# Instalar Podman y dependencias necesarias
 RUN apk update && \
-    apk add --no-cache \
-    bash \
-    podman \
-    fuse-overlayfs \
-    git \
-    shadow \
-    runc \
-    openssl && \
+    apk add --no-cache podman fuse-overlayfs shadow shadow-uidmap bash && \
     rm -rf /var/cache/apk/*
 
-# Para verificar instalacion
+# Comprobar que todo funciona
 CMD ["podman", "--version"]
