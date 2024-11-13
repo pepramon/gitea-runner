@@ -12,10 +12,12 @@ jobs:
     steps:
       - name: Logeo en dockerhub
         run: podman login -u pepramon -p ${{ secret.DOCKERHUB }} docker.io
-      - name: Checkout repositorio
-        id: chekout
-        uses: http://gitea:3000/acciones/checkout@v1
-      - name: Se construye la imagen
-        run: podman build -t docker.io/pepramon/gitea-runer:latest .
-      - name: Se sube la imagen
-        run: podman push docker.io/pepramon/gitea-runer:latest
+      - name: Test de que se lee la variable (erronea, cambiar)
+        run: echo ${{ secret.DOCKERHUBTEST }}
+#      - name: Checkout repositorio
+#        id: chekout
+#        uses: http://gitea:3000/acciones/checkout@v1
+#      - name: Se construye la imagen
+#        run: podman build -t docker.io/pepramon/gitea-runer:latest .
+#      - name: Se sube la imagen
+#        run: podman push docker.io/pepramon/gitea-runer:latest
