@@ -1,12 +1,12 @@
 name: Crear nueva imagen al actualizar
 run-name: Se crea nueva imagen y se sube a dockerhub
 on:
-#  push:
-#    branches:
-#      - main
+  push:
+    branches:
+      - main
   schedule:
-    - cron: "*/5 * * * *"  # Ejecuta cada 5 min para pruebas
-#    - cron: "19 2 * * *"  # Ejecuta todos los días a las 02:19h
+#    - cron: "*/5 * * * *"  # Ejecuta cada 5 min para pruebas
+    - cron: "19 2 * * *"  # Ejecuta todos los días a las 02:19h
 
 jobs:
   crear-imagen:
@@ -37,13 +37,13 @@ jobs:
         if: env.construir != 'true'
         run: |
           echo "Realizando pull de las imagenes para comprobar si hay cambios"
-          podman pull nginx:latest
+          podman pull alpine:latest
           podman pull docker.io/pepramon/gitea-runer:latest
           # Se guarda que se ha hecho pull
           echo "pullEcho=true" >> $GITHUB_ENV
           
           # Se obtiene el sha de la imagen base
-          base=$(podman inspect nginx:latest --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
+          base=$(podman inspect alpine:latest --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
           # Se obtiene el guardado en la imagen construida
           imagen=$(podman inspect docker.io/pepramon/gitea-runer:latest --format '{{ index .Config.Labels "base_digest" }}')
           
