@@ -45,7 +45,7 @@ jobs:
           # Se obtiene el sha de la imagen base
           base=$(podman inspect alpine:latest --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
           # Se obtiene el guardado en la imagen construida
-          imagen=$(podman inspect docker.io/pepramon/gitea-runner:latest --format '{{ index .Config.Labels "base_digest" }}')
+          imagen=$(podman inspect docker.io/pepramon/gitea-runer:latest --format '{{ index .Config.Labels "base_digest" }}')
           
           # Comprobación de si ha cambiado o no
           if [ "$base" == "$imagen" ]; then
