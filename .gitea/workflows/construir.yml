@@ -1,9 +1,9 @@
 name: Crear nueva imagen al actualizar
 run-name: Se crea nueva imagen y se sube a dockerhub
 on:
-  push:
-    branches:
-      - main
+#  push:
+#    branches:
+#      - main
   schedule:
     - cron: "*/5 * * * *"  # Ejecuta cada 5 min para pruebas
 #    - cron: "19 2 * * *"  # Ejecuta todos los días a las 02:19h
@@ -25,7 +25,7 @@ jobs:
           echo "Se hacen comprobaciones de actualizaciones de Alpine"
           apk update
           
-          updates=$(apk list -u)
+          updates=$(apk list -u | wc -l)
           if [ "$updates" -gt 0 ]; then
             echo "Actualizaciones disponibles en Alpine. Hay que construir imagen"
             echo "construir=true" >> $GITHUB_ENV
@@ -45,7 +45,7 @@ jobs:
           # Se obtiene el sha de la imagen base
           base=$(podman inspect alpine:latest --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
           # Se obtiene el guardado en la imagen construida
-          imagen=$(podman inspect pepramon/gitea-runner:latest --format '{{ index .Config.Labels "base_digest" }}')
+          imagen=$(podman inspect docker.io/pepramon/gitea-runner:latest --format '{{ index .Config.Labels "base_digest" }}')
           
           # Comprobación de si ha cambiado o no
           if [ "$base" == "$imagen" ]; then
