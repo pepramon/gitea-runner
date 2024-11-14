@@ -4,23 +4,81 @@ on:
   push:
     branches:
       - main
+    schedule:
+      - cron: "*/5 * * * *"  # Ejecuta cada 5 min para pruebas
+#      - cron: "19 2 * * *"  # Ejecuta todos los días a las 02:19h
 
 jobs:
   crear-imagen:
     runs-on: custom
     privileged: true
     steps:
+      - name: Comprobar si es un push para construir imagen
+        if: github.event_name == 'push' 
+        run: |
+          echo "Se hace push, se debe construir la imagen"
+          echo "construir=true" >> $GITHUB_ENV
+          
+      - name: Comprobar si hay actualizaciones de Alpine
+        if: env.construir != 'true'
+        run: |
+          echo "Se hacen comprobaciones de actualizaciones de Alpine"
+          apk update > updates.log
+          apk list -u >> updates.log
+          
+          updates=$(cat updates.log | grep -c "available")
+          if [ "$updates" -gt 0 ]; then
+            echo "Actualizaciones disponibles en Alpine. Hay que construir imagen"
+            echo "construir=true" >> $GITHUB_ENV
+          else
+            echo "No hay actualizaciones disponibles en Alpine."
+          fi
+          
+      - name: Comprobando si imagen base ha cambiado
+        if: env.construir != 'true'
+        run: |
+          echo "Realizando pull de las imagenes para comprobar si hay cambios"
+          podman pull alpine:latest
+          podman pull docker.io/pepramon/gitea-runer:latest
+          # Se guarda que se ha hecho pull
+          echo "pullEcho=true" >> $GITHUB_ENV
+          
+          # Se obtiene el sha de la imagen base
+          base=$(podman inspect alpine:latest --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
+          # Se obtiene el guardado en la imagen construida
+          imagen=$(podman inspect pepramon/gitea-runner:latest --format '{{ index .Config.Labels "base_digest" }}')
+          
+          # Comprobación de si ha cambiado o no
+          if [ "$base" == "$imagen" ]; then
+            echo "La imagen base no ha cambiado."
+          else
+            echo "La imagen base ha cambiado. Hay que reconstruir la imagen derivada."
+            echo "construir=true" >> $GITHUB_ENV
+          fi
+          
       - name: Checkout repositorio
+        if: env.construir == 'true'
         uses: http://gitea:3000/acciones/checkout@v1
+        
+      - name: Hacer pull imagen del alpine
+        if: ${{ env.pullEcho != 'true' && env.construir == 'true' }}
+        run: |
+          echo "Haciendo pull de alpine"
+          podman pull alpine:latest
+          
       - name: Se construye la imagen
+        if: env.construir == 'true'
         run: |
           # Obtén el digest de la imagen base (alpine:latest)
-          podman pull alpine:latest
           base_digest=$(podman inspect alpine:latest --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
           
           # Construcción de la imagen
           podman build -t docker.io/pepramon/gitea-runer:latest --label base_digest="$base_digest" .
+          
       - name: Logeo en dockerhub
+        if: env.construir == 'true'
         run: podman login -u pepramon -p ${{ secrets.DOCKERHUB }} docker.io
+        
       - name: Se sube la imagen
+        if: env.construir == 'true'
         run: podman push docker.io/pepramon/gitea-runer:latest
