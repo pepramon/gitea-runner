@@ -13,7 +13,13 @@ jobs:
       - name: Checkout repositorio
         uses: http://gitea:3000/acciones/checkout@v1
       - name: Se construye la imagen
-        run: podman build -t docker.io/pepramon/gitea-runer:latest .
+        run: |
+          # Obtén el digest de la imagen base (alpine:latest)
+          podman pull alpine:latest
+          base_digest=$(podman inspect alpine:latest --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
+          
+          # Construcción de la imagen
+          podman build -t docker.io/pepramon/gitea-runer:latest --label base_digest="$base_digest" .
       - name: Logeo en dockerhub
         run: podman login -u pepramon -p ${{ secrets.DOCKERHUB }} docker.io
       - name: Se sube la imagen
