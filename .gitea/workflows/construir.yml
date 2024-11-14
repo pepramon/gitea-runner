@@ -37,13 +37,13 @@ jobs:
         if: env.construir != 'true'
         run: |
           echo "Realizando pull de las imagenes para comprobar si hay cambios"
-          podman pull alpine:latest
+          podman pull nginx:latest
           podman pull docker.io/pepramon/gitea-runer:latest
           # Se guarda que se ha hecho pull
           echo "pullEcho=true" >> $GITHUB_ENV
           
           # Se obtiene el sha de la imagen base
-          base=$(podman inspect alpine:latest --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
+          base=$(podman inspect nginx:latest --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
           # Se obtiene el guardado en la imagen construida
           imagen=$(podman inspect docker.io/pepramon/gitea-runer:latest --format '{{ index .Config.Labels "base_digest" }}')
           
