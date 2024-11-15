@@ -18,7 +18,7 @@ jobs:
     runs-on: custom
 #    privileged: true
     env:
-      IMAGEN_BASE: 'alpine:latest'
+      IMAGEN_BASE: 'docker.io/library/alpine:latest'
       IMAGEN_DEST: 'docker.io/pepramon/gitea-runer:latest'
     steps:
       - name: Comprobar si es un push
