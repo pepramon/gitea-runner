@@ -16,7 +16,7 @@ on:
 jobs:
   "Actualización de imagen":
     runs-on: custom
-    privileged: true
+#    privileged: true
     steps:
       - name: Comprobar si es un push
         run: |
