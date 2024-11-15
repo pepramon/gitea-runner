@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+      
+    # Solo se lanza la acción si cambia el Dockerfile
+    paths:
+      - 'Dockerfile'
+      
   schedule:
 #    - cron: "*/5 * * * *"  # Ejecuta cada 5 min para pruebas
     - cron: "19 2 * * *"  # Ejecuta todos los días a las 02:19h
