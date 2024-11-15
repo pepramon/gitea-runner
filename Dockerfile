@@ -7,5 +7,5 @@ RUN apk update && \
     apk upgrade && \
     rm -rf /var/cache/apk/*
 
-# Comprobar que todo funciona
+# Comprobar que todo funciona. No se utiliza con ACT
 CMD ["podman", "--version"]

@@ -17,6 +17,9 @@ jobs:
   "Actualización de imagen":
     runs-on: custom
 #    privileged: true
+    env:
+      IMAGEN_BASE: 'alpine:latest'
+      IMAGEN_DEST: 'docker.io/pepramon/gitea-runer:latest'
     steps:
       - name: Comprobar si es un push
         run: |
@@ -45,15 +48,15 @@ jobs:
         if: env.construir != 'true'
         run: |
           echo "Realizando pull de las imagenes para comprobar si hay cambios"
-          podman pull alpine:latest
-          podman pull docker.io/pepramon/gitea-runer:latest
+          podman pull $IMAGEN_BASE
+          podman pull $IMAGEN_DEST
           # Se guarda que se ha hecho pull
           echo "pullEcho=true" >> $GITHUB_ENV
           
           # Se obtiene el sha de la imagen base
-          base=$(podman inspect alpine:latest --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
+          base=$(podman inspect $IMAGEN_BASE --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
           # Se obtiene el guardado en la imagen construida
-          imagen=$(podman inspect docker.io/pepramon/gitea-runer:latest --format '{{ index .Config.Labels "base_digest" }}')
+          imagen=$(podman inspect $IMAGEN_DEST --format '{{ index .Config.Labels "base_digest" }}')
           
           # Comprobación de si ha cambiado o no
           if [ "$base" == "$imagen" ]; then
@@ -71,16 +74,16 @@ jobs:
         if: ${{ env.pullEcho != 'true' && env.construir == 'true' }}
         run: |
           echo "Haciendo pull de alpine"
-          podman pull alpine:latest
+          podman pull $IMAGEN_BASE
           
       - name: Se construye la imagen
         if: env.construir == 'true'
         run: |
-          # Obtén el digest de la imagen base (alpine:latest)
-          base_digest=$(podman inspect alpine:latest --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
+          # Obtén el digest de la imagen base 
+          base_digest=$(podman inspect $IMAGEN_BASE --format '{{index .RepoDigests 0}}' | awk -F'@' '{print $2}')
           
           # Construcción de la imagen
-          podman build -t docker.io/pepramon/gitea-runer:latest --label base_digest="$base_digest" .
+          podman build -t $IMAGEN_DEST --label base_digest="$base_digest" .
           
       - name: Logeo en dockerhub
         if: env.construir == 'true'
@@ -88,4 +91,4 @@ jobs:
         
       - name: Se sube la imagen
         if: env.construir == 'true'
-        run: podman push docker.io/pepramon/gitea-runer:latest
+        run: podman push $IMAGEN_DEST
