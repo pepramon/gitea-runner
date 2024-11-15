@@ -14,7 +14,7 @@ on:
     - cron: "19 2 * * *"  # Ejecuta todos los días a las 02:19h
 
 jobs:
-  crear-imagen:
+  "Actualización de imagen":
     runs-on: custom
     privileged: true
     steps:
