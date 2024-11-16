@@ -1,4 +1,4 @@
-# Usamos Alpine como base para un entorno ligero
+# Alpine como base para un entorno ligero
 FROM alpine:latest
 
 # Instalar Podman y dependencias necesarias
@@ -7,5 +7,6 @@ RUN apk update && \
     apk upgrade && \
     rm -rf /var/cache/apk/*
 
-# Comprobar que todo funciona. No se utiliza con ACT
+# Comprobar que todo funciona si se lanza manualmente.
+# Al lanzarlo ACT runner, sobreescribe este comando
 CMD ["podman", "--version"]
